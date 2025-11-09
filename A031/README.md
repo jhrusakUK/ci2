@@ -1,4 +1,4 @@
-## How to run A03 solution
+## How to run A03
 
 ```bash
 # Clone the repository
@@ -21,4 +21,5 @@ source venv/bin/activate
 pip install beautifulsoup4>=4.12
 
 # Run the script (HTML file downloaded from Molbase search for "benzidine")
+
 python molbase_parser.py molbase_benzidine.html
