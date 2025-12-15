@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>A08: ChEMBL lookup by SMILES</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+
+  <body>
+    <main class="container">
+      <header class="header">
+        <h1>A08: ChEMBL lookup by SMILES</h1>
+        <p class="subtitle">
+          Enter a SMILES string, query ChEMBL, and display information about the first matching compound.
+        </p>
+      </header>
+
+      <section class="card">
+        <form method="post" class="form">
+          <label for="smiles">SMILES</label>
+          <input
+            id="smiles"
+            name="smiles"
+            type="text"
+            placeholder="e.g. O=C(O)c1ccccc1"
+            value="{{ smiles }}"
+            required
+          />
+
+          <label for="threshold">Similarity threshold (70-100)</label>
+          <input
+            id="threshold"
+            name="threshold"
+            type="number"
+            min="70"
+            max="100"
+            value="{{ threshold }}"
+          />
+
+          <button type="submit">Search</button>
+        </form>
+
+        {% if error %}
+          <div class="error">
+            <strong>Error:</strong> {{ error }}
+          </div>
+        {% endif %}
+      </section>
+
+      {% if fields %}
+        <section class="card">
+          <h2>Result (first hit)</h2>
+
+          {% if hit %}
+            <p class="muted">
+              Similarity search hit: <code>{{ hit.get('molecule_chembl_id') }}</code>
+            </p>
+          {% endif %}
+
+          <table class="table">
+            <tbody>
+              {% for k, v in fields.items() %}
+                <tr>
+                  <th>{{ k }}</th>
+                  <td>
+                    {% if v is sequence and v is not string %}
+                      {% if v|length == 0 %}
+                        <span class="muted">(none)</span>
+                      {% else %}
+                        <ul class="list">
+                          {% for item in v %}
+                            <li>{{ item }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% endif %}
+                    {% else %}
+                      {{ v if v is not none else "" }}
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <p class="muted">
+            Tip: you can immediately run a new search using the form at the top of the page.
+          </p>
+        </section>
+      {% endif %}
+    </main>
+  </body>
+</html>
