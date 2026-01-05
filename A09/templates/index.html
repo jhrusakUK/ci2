@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>A09: ChEMBL + 3D render</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+
+  <body>
+    <main class="container">
+      <header class="header">
+        <h1>A09: ChEMBL lookup + 3D rendering (obabel + povray)</h1>
+        <p class="subtitle">
+          Enter a SMILES string. The page stays the same; results update dynamically via JavaScript.
+        </p>
+      </header>
+
+      <section class="card">
+        <form id="smilesForm" class="form">
+          <label for="smiles">SMILES</label>
+          <input id="smiles" name="smiles" type="text" placeholder="e.g. O=C(O)c1ccccc1" required />
+          <button type="submit">Search</button>
+        </form>
+
+        <div id="status" class="status muted"></div>
+        <div id="error" class="error" style="display:none;"></div>
+      </section>
+
+      <section id="resultCard" class="card" style="display:none;">
+        <h2>Result</h2>
+        <p class="muted" id="queryInfo"></p>
+
+        <div class="grid">
+          <div>
+            <h3>3D Image</h3>
+            <img id="molImage" class="molimg" alt="3D molecule render" />
+          </div>
+
+          <div>
+            <h3>Compound data</h3>
+            <table class="table">
+              <tbody id="fieldsTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const form = document.getElementById("smilesForm");
+      const statusEl = document.getElementById("status");
+      const errorEl = document.getElementById("error");
+      const resultCard = document.getElementById("resultCard");
+      const fieldsTable = document.getElementById("fieldsTable");
+      const molImage = document.getElementById("molImage");
+      const queryInfo = document.getElementById("queryInfo");
+
+      function setStatus(msg) {
+        statusEl.textContent = msg || "";
+      }
+
+      function showError(msg) {
+        errorEl.style.display = "block";
+        errorEl.textContent = msg;
+      }
+
+      function clearError() {
+        errorEl.style.display = "none";
+        errorEl.textContent = "";
+      }
+
+      function clearResults() {
+        resultCard.style.display = "none";
+        fieldsTable.innerHTML = "";
+        molImage.removeAttribute("src");
+        queryInfo.textContent = "";
+      }
+
+      function isArray(value) {
+        return Array.isArray(value);
+      }
+
+      function renderFields(fields) {
+        fieldsTable.innerHTML = "";
+        for (const [key, value] of Object.entries(fields)) {
+          const tr = document.createElement("tr");
+
+          const th = document.createElement("th");
+          th.textContent = key;
+
+          const td = document.createElement("td");
+
+          if (isArray(value)) {
+            if (value.length === 0) {
+              td.innerHTML = '<span class="muted">(none)</span>';
+            } else {
+              const ul = document.createElement("ul");
+              ul.className = "list";
+              for (const item of value) {
+                const li = document.createElement("li");
+                li.textContent = item;
+                ul.appendChild(li);
+              }
+              td.appendChild(ul);
+            }
+          } else {
+            td.textContent = (value === null || value === undefined) ? "" : String(value);
+          }
+
+          tr.appendChild(th);
+          tr.appendChild(td);
+          fieldsTable.appendChild(tr);
+        }
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        clearError();
+        clearResults();
+
+        const smiles = document.getElementById("smiles").value.trim();
+        if (!smiles) {
+          showError("Please enter a SMILES string.");
+          return;
+        }
+
+        setStatus("Searching ChEMBL and rendering image...");
+
+        try {
+          const resp = await fetch("/api/lookup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ smiles }),
+          });
+
+          const data = await resp.json();
+
+          if (!resp.ok || !data.ok) {
+            showError(data.error || "Request failed.");
+            setStatus("");
+            return;
+          }
+
+          // Cache-bust image so repeated searches refresh properly
+          const imgUrl = data.image_url + "?v=" + Date.now();
+
+          queryInfo.textContent = `Query SMILES: ${data.query_smiles} | First hit: ${data.chembl_id}`;
+          molImage.src = imgUrl;
+          renderFields(data.fields);
+
+          resultCard.style.display = "block";
+          setStatus("");
+        } catch (err) {
+          showError("Network or server error: " + err);
+          setStatus("");
+        }
+      });
+    </script>
+  </body>
+</html>
