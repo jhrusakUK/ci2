@@ -24,7 +24,7 @@ All files for this assignment are located in the repository subfolder:
 git clone https://github.com/jhrusakUK/ci2.git
 cd ci2/A08
 
-# Create virtual environment
+## Create virtual environment
 python3 -m venv venv
 
 ## Activate virtual environment
