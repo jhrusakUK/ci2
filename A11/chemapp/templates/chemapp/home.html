@@ -1,0 +1,15 @@
+{% extends "chemapp/base.html" %}
+
+{% block content %}
+  <h2>Welcome</h2>
+  <p>
+    This website provides two chemistry functions:
+  </p>
+  <ul>
+    <li><strong>ChEMBL</strong>: look up molecule data by SMILES and store submissions in the database.</li>
+    <li><strong>Povray</strong>: generate a 3D molecular image from SMILES using Open Babel and POV-Ray.</li>
+  </ul>
+  <p>
+    Use the menu above to open the desired function.
+  </p>
+{% endblock %}

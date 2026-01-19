@@ -1,0 +1,58 @@
+{% extends "chemapp/base.html" %}
+
+{% block content %}
+  <h2>ChEMBL lookup</h2>
+
+  <form method="post" class="card">
+    {% csrf_token %}
+    <label for="smiles">SMILES</label>
+    <input id="smiles" name="smiles" type="text" value="{{ smiles }}" placeholder="e.g. O=C(O)c1ccccc1" required>
+    <button type="submit">Search</button>
+  </form>
+
+  {% if error %}
+    <pre class="error">{{ error }}</pre>
+  {% endif %}
+
+  {% if fields %}
+  <h3>Result (first hit)</h3>
+  <table class="table">
+    <tbody>
+      {% for row in fields %}
+        <tr>
+          <th>{{ row.key }}</th>
+          <td>
+            {% if row.is_list %}
+              <ul>
+                {% for item in row.value %}
+                  <li>{{ item }}</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              {{ row.value }}
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+
+
+  <h3>Last 10 submitted SMILES</h3>
+  <table class="table">
+    <thead>
+      <tr><th>Time</th><th>SMILES</th></tr>
+    </thead>
+    <tbody>
+      {% for q in history %}
+        <tr>
+          <td>{{ q.created_at }}</td>
+          <td>{{ q.smiles }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="2">(no entries yet)</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

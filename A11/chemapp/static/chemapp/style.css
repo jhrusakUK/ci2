@@ -1,0 +1,95 @@
+body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  background: #0b0d10;
+  color: #e7e7e7;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+.header {
+  background: #12161b;
+  border-bottom: 1px solid #232a33;
+}
+
+.nav a {
+  margin-right: 12px;
+  color: #5aa9ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+}
+
+.card {
+  background: #12161b;
+  border: 1px solid #232a33;
+  border-radius: 10px;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #232a33;
+  background: #0f1317;
+  color: #e7e7e7;
+}
+
+button {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #232a33;
+  background: #5aa9ff;
+  color: #001524;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.table th, .table td {
+  border-top: 1px solid #232a33;
+  padding: 10px 8px;
+  vertical-align: top;
+}
+
+.table th {
+  width: 260px;
+  color: #a8b0bb;
+  text-align: left;
+}
+
+.error {
+  white-space: pre-wrap;
+  color: #ffb4b4;
+  background: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.35);
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.molimg {
+  width: 100%;
+  max-width: 800px;
+  border-radius: 10px;
+  border: 1px solid #232a33;
+  background: #0f1317;
+}
+
+.muted {
+  color: #a8b0bb;
+}

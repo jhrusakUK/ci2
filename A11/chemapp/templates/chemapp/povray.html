@@ -1,0 +1,22 @@
+{% extends "chemapp/base.html" %}
+
+{% block content %}
+  <h2>Povray rendering</h2>
+
+  <form method="post" class="card">
+    {% csrf_token %}
+    <label for="smiles">SMILES</label>
+    <input id="smiles" name="smiles" type="text" value="{{ smiles }}" placeholder="e.g. O=C(O)c1ccccc1" required>
+    <button type="submit">Render</button>
+  </form>
+
+  {% if error %}
+    <pre class="error">{{ error }}</pre>
+  {% endif %}
+
+  {% if image_url %}
+    <h3>3D image</h3>
+    <img src="{{ image_url }}" alt="Rendered molecule" class="molimg">
+    <p class="muted">Image saved as a static file: {{ image_url }}</p>
+  {% endif %}
+{% endblock %}
